@@ -51,7 +51,7 @@ print("\nThe equation system is:")
 for i in range(variables):
     equation = ""
     for j in range(variables):
-        equation += f"{coefficients[i][j]}x{j+1} + "
+        equation += f"{int(coefficients[i][j])}x{j+1} + "
     equation = equation[:-3] + f"= {constants[i]}"
     print(equation)
 
