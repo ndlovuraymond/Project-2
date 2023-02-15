@@ -30,7 +30,7 @@ def Equation_Solver(coefficients, constants_d):
 
 
 # accepting user inputs
-variables = int(input("Enter the number of variables in the system: "))
+variables = int(input("Enter the number of variables in the equation system: "))
 coefficients = []
 constants = []
 for i in range(variables):
