@@ -1,92 +1,106 @@
-class Linear_Equations:
-    def __init__(self) -> None:
-        self.coefficients = []
-        self.constants = []
+# giving the user instructions
+print(
+    "Type linear equations in augmented matrix notation: a1 a2....aN d, \n         where a1...N are coefficients and d is constant"
+)
+print("Type END to finish entering equations")
+inputting_data = True
+equations = []
+count = 1
+constants = []
+variables = 0
+# accepting user inputs for the equations
+while inputting_data:
+    cur_eq = input(f"Eq #{count}:")
+    constant = ""
+    if cur_eq.upper() != "END":
+        constant = input(f"Enter constant d for Eq #{count}: ")
+    if cur_eq.upper() != "END":
+        try:
+            constant = float(constant)
+            constants.append(constant)
+        except:
+            print("Constant has to be a number. e.g. 1")
+            continue
+    if count == 1:
+        variables = len(cur_eq.split())
+    if cur_eq.upper() == "END":
+        inputting_data = False
+        break
+    if len(cur_eq.split()) != variables and cur_eq.upper() != "END":
+        print("Error, the number of variables entered is incorrect")
+        exit()
+    values = cur_eq.split()
+    eq_values = []
+    if cur_eq != "END":
+        try:
+            for value in values:
+                value = float(value)
+                eq_values.append(value)
+            equations.append(eq_values)
+        except:
+            print("Please enter data correctly.")
+    count += 1
+# displaying the equations
+for equation in range(1, len(equations) + 1):
+    string = f"Eq #{equation}"
+    cur_eq = equations[equation - 1]
+    for value in range(0, len(cur_eq)):
+        if value == 0:
+            string += f" {int(cur_eq[value])}*x{value+1} "
+        elif value != 0 and value != (len(cur_eq) - 1):
+            if int(cur_eq[value]) >= 0 and value != (len(cur_eq) - 1):
+                string += "+"
+                string += f" {int(cur_eq[value])}*x{value+1} "
+            elif int(cur_eq[value]) < 0 and value != (len(cur_eq) - 1):
+                string += "-"
+                string += f" {int(cur_eq[value])}*x{value+1} "
+        if value == (len(cur_eq) - 1):
+            string += "="
+            string += f" {int(cur_eq[value])}"
+    print(string)
 
-    def Equation_Solver(self):
-        # Method for Forward elimination
-        number = len(self.constants)
-        i = 0
-        while i < (number - 1):
-            for j in range(i + 1, number):
-                try:
-                    factor = self.coefficients[j][i] / self.coefficients[i][i]
-                    self.coefficients[j] = [
-                        x - y * factor
-                        for x, y in zip(self.coefficients[j], self.coefficients[i])
-                    ]
-                    self.constants[j] -= self.constants[i] * factor
-                except:
-                    print("The coefficient is 0")
-                    exit()
-            i += 1
-
-        # Method for Back substitution
-        solution = [0] * number
-        number_record = number - 1
-        while number > -1:
+# method for forward elimination and backward elimination
+def equation_solver(cur_constants, cur_equations):
+    # forward elimination
+    number = len(cur_constants)
+    i = 0
+    while i < (number - 1):
+        j = i + 1
+        while j < number:
             try:
-                solution[i] = (
-                    self.constants[i]
-                    - sum(
-                        [
-                            self.coefficients[i][j] * solution[j]
-                            for j in range(i + 1, number)
-                        ]
-                    )
-                ) / self.coefficientscoefficients[i][i]
-
+                factor = cur_equations[j][i] / cur_equations[i][i]
+                cur_equations[j] = [
+                    x - y * factor for x, y in zip(cur_equations[j], cur_equations[i])
+                ]
+                cur_constants[j] -= cur_constants[i] * factor
             except:
                 print("The coefficient is 0")
                 exit()
-            number += -1
+            j += 1
+        i += 1
 
-        return solution
-
-    def display_values(self):
-        # accepting user inputs
-        inputting_value = True
-        while inputting_value == True:
+        # Back substitution
+        answers = [0] * number
+        i = number - 1
+        while i > -1:
             try:
-                variables = int(
-                    input("Enter the number of variables in the equation system: ")
-                )
-                inputting_value = False
+                list = []
+                for equation in range(i + 1, number):
+                    value = cur_equations[i][equation] * answers[equation]
+                    list.append(value)
+                answers[i] = (cur_constants[i] - sum(list)) / cur_equations[i][i]
             except:
-                print("Please enter a numerical value e.g. 5")
-        coefficients = []
-        constants = []
-        i = 0
-        while i < variables:
-            row = input(f"Eq #{i+1}: ").split()
-            if len(row) != variables:
-                print(
-                    "Error: number of coefficients must be equal to number of variables"
-                )
+                print("The coefficient is 0")
                 exit()
-            current_row = []
-            for value in row:
-                cur_val = float(value)
-                current_row.append(cur_val)
-            coefficients.append(current_row)
-            constant = float(input(f"Enter the constant d for equation {i+1}: "))
-            constants.append(constant)
-            i += 1
-        self.coefficients = coefficients
-        self.constants = constants
-        # Displaying the equation system
-        print("\nThe equation system is:")
-        for i in range(variables):
-            equation = ""
-            for j in range(variables):
-                equation += f"{int(coefficients[i][j])}x{j+1} + "
-            equation = equation[:-3] + f"= {constants[i]}"
-            print(equation)
+            i -= 1
 
-        # Solving the equations
-        solver = self.Equation_Solver()
+        return answers
 
-        # Displaying the solution
-        print("Result is")
-        for i, x in enumerate(solver):
-            print(f"x{i+1} = {x} \n")
+
+answers = equation_solver(constants, equations)
+# showing results
+print("\nResult is: ")
+i = 1
+for answer in answers:
+    print(f"x{i} = {answer}")
+    i += 1
