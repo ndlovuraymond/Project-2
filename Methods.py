@@ -12,34 +12,29 @@ variables = 0
 while inputting_data:
     cur_eq = input(f"Eq #{count}:")
     constant = ""
-    if cur_eq.upper() != "END":
-        constant = input(f"Enter constant d for Eq #{count}: ")
-    if cur_eq.upper() != "END":
-        try:
-            constant = float(constant)
-            constants.append(constant)
-        except:
-            print("Constant has to be a number. e.g. 1")
-            continue
     if count == 1:
         variables = len(cur_eq.split())
     if cur_eq.upper() == "END":
         inputting_data = False
         break
-    if len(cur_eq.split()) != variables and cur_eq.upper() != "END":
+    if len(cur_eq.split()) != (variables) and cur_eq.upper() != "END":
         print("Error, the number of variables entered is incorrect")
         exit()
     values = cur_eq.split()
     eq_values = []
     if cur_eq != "END":
         try:
-            for value in values:
-                value = float(value)
+            for value in range(0, len(values) - 1):
+                value = float(values[value])
                 eq_values.append(value)
             equations.append(eq_values)
+            constant = float(values[len(values) - 1])
+            constants.append(constant)
         except:
             print("Please enter data correctly.")
+            continue
     count += 1
+
 # displaying the equations
 for equation in range(1, len(equations) + 1):
     string = f"Eq #{equation}"
@@ -47,16 +42,14 @@ for equation in range(1, len(equations) + 1):
     for value in range(0, len(cur_eq)):
         if value == 0:
             string += f" {int(cur_eq[value])}*x{value+1} "
-        elif value != 0 and value != (len(cur_eq) - 1):
-            if int(cur_eq[value]) >= 0 and value != (len(cur_eq) - 1):
+        elif value != 0:
+            if int(cur_eq[value]) >= 0:
                 string += "+"
                 string += f" {int(cur_eq[value])}*x{value+1} "
-            elif int(cur_eq[value]) < 0 and value != (len(cur_eq) - 1):
+            elif int(cur_eq[value]) < 0:
                 string += "-"
                 string += f" {int(cur_eq[value])}*x{value+1} "
-        if value == (len(cur_eq) - 1):
-            string += "="
-            string += f" {int(cur_eq[value])}"
+    string += f"= {constants[equation-1]}"
     print(string)
 
 # method for forward elimination and backward elimination
